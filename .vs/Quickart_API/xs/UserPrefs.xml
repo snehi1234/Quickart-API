@@ -1,0 +1,32 @@
+﻿<Properties StartupConfiguration="{5841D5A4-E517-44EE-AEC7-39A3ED062249}|Default">
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Controllers/LoginController.cs" relfile="Quickart_API/Controllers/LoginController.cs" line="65" column="1" />
+      <Breakpoint file="/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Controllers/GetStoresAndProductsController.cs" relfile="Quickart_API/Controllers/GetStoresAndProductsController.cs" line="63" column="1" />
+      <Breakpoint file="/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Controllers/GetStoresAndProductsController.cs" relfile="Quickart_API/Controllers/GetStoresAndProductsController.cs" line="67" column="1" />
+      <Breakpoint file="/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Controllers/GetStoresAndProductsController.cs" relfile="Quickart_API/Controllers/GetStoresAndProductsController.cs" line="64" column="1" />
+      <Breakpoint file="/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Controllers/GetStoresAndProductsController.cs" relfile="Quickart_API/Controllers/GetStoresAndProductsController.cs" line="76" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Quickart__API PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Quickart_API/Controllers/OrderController.cs">
+    <Files>
+      <File FileName="Quickart_API/Controllers/LoginController.cs" Line="82" Column="138" />
+      <File FileName="Quickart_API/Controllers/AddressOperationsController.cs" Line="25" Column="44" />
+      <File FileName="Quickart_API/Controllers/OrderController.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Quickart_API" expanded="True" selected="True" />
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+</Properties>
