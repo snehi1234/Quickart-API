@@ -19,12 +19,7 @@ if (app.Environment.IsDevelopment())
 } 
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-           Path.Combine(builder.Environment.ContentRootPath, "MyStaticFiles")),
-    RequestPath = "/StaticFiles"
-});
+
 
 app.UseAuthorization();
 
