@@ -8,6 +8,16 @@
       "sslPort": 44307
     }
   },
+  "Kestrel": {
+    "Endpoints": {
+      "Http": {
+        "Url": "http://localhost:5000"
+      },
+      "Https": {
+        "Url": "https://localhost:5001"
+      }
+    }
+  },
   "profiles": {
     "Quickart_API": {
       "commandName": "Project",
@@ -15,11 +25,12 @@
       //"launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5000",
-      
+
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
@@ -28,6 +39,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
+  
   }
 }
 
