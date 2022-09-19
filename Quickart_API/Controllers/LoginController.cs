@@ -1,6 +1,4 @@
-﻿// IMPLEMENT JWT TOKENS //
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -100,7 +98,7 @@ namespace Quickart_API.Controllers
         {
             string Email = request.Email;
             string Password = request.Password;
-             
+
             string st = ("SELECT user_id FROM Users where email='" + Email + "' and Password='" + Password + "'");
 
             DataTable table = new DataTable();
@@ -119,7 +117,7 @@ namespace Quickart_API.Controllers
                     myReader.Close();
                     mycon.Close();
                 }
-               
+
                 if (table.Rows.Count > 0)
                 {
                     flag = true;
@@ -148,19 +146,19 @@ namespace Quickart_API.Controllers
         public async Task<ActionResult<SignupResponse>> SignupUserAsync([FromBody] SignupRequest request)
         {
             string? final_message = null;
-            int resp_code=0;
+            int resp_code = 0;
             string? FirstName = request.FirstName;
             string? LastName = request.LastName;
             string Email = request.Email;
             string Password = request.Password;
             Data Dt = new Data();
-            
+
             //check if email exists
-            string st = ("SELECT * FROM Users where email='" + Email+ "'");
+            string st = ("SELECT * FROM Users where email='" + Email + "'");
             DataTable table = new DataTable();
             string DataSource = _configuration.GetConnectionString("QuickartCon");
             MySqlDataReader myReader;
-            
+
             using (MySqlConnection mycon = new MySqlConnection(DataSource))
             {
                 mycon.Open();
@@ -168,7 +166,7 @@ namespace Quickart_API.Controllers
                 {
                     myReader = mycommand.ExecuteReader();
                     table.Load(myReader);
-                    
+
                     myReader.Close();
                     mycon.Close();
                 }
@@ -184,7 +182,7 @@ namespace Quickart_API.Controllers
             if (String.IsNullOrEmpty(final_message))
             {
                 // Insert new user into DB
-                st = ("Insert into Users (first_name, last_name, email, Password) values ('" + FirstName + "','" + LastName + "','"+Email+ "','"+Password+ "')");
+                st = ("Insert into Users (first_name, last_name, email, Password) values ('" + FirstName + "','" + LastName + "','" + Email + "','" + Password + "')");
                 using (MySqlConnection mycon = new MySqlConnection(DataSource))
                 {
                     mycon.Open();
@@ -215,7 +213,8 @@ namespace Quickart_API.Controllers
                         final_message = "some error in inserting";
                         resp_code = 404;
                     }
-                    else {
+                    else
+                    {
                         //send email to user
                         SendEmail(Email, "lifelineteam11@gmail.com");
 
@@ -242,15 +241,3 @@ namespace Quickart_API.Controllers
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

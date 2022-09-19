@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.23.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
     <PackageReference Include="JWT" Version="9.0.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
     <None Remove="JWT" />
     <None Remove="View\" />
     <None Remove="StaticFiles\" />
+    <None Remove="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

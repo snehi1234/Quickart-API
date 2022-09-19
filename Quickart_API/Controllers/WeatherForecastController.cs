@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Quickart_API.Controllers;
-
+[Route("home")]
 [ApiController]
 public class WeatherForecastController : ControllerBase
 {
@@ -18,7 +18,7 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/")]
+    [Route("weather")]
     public IEnumerable<WeatherForecast> Get()
     {
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast

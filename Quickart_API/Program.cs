@@ -1,7 +1,17 @@
 ﻿using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.FileProviders;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+                      });
+});
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -11,11 +21,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//app.UseForwardedHeaders(new ForwardedHeadersOptions
-//{
-//    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-//});
-
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 
 // Configure the HTTP request pipeline.
