@@ -219,6 +219,8 @@ namespace Quickart_API.Controllers
                         SendEmail(Email, "lifelineteam11@gmail.com");
 
                         //Generate token
+                        string token = CreateToken(Email);
+                        Dt.token = token;
                         final_message = "user inserted";
                         resp_code = 200;
                         Dt.user_id = Convert.ToInt32(table.Rows[0]["user_id"]);
