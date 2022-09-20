@@ -93,49 +93,62 @@ namespace Quickart_API.Controllers
         }
 
 
-        [HttpGet("LoginUser", Name = nameof(LoginUserAsync))]
+        [HttpPost("LoginUser", Name = nameof(LoginUserAsync))]
         public async Task<ActionResult<LoginResponse>> LoginUserAsync([FromBody] LoginRequest request)
         {
-            string Email = request.Email;
-            string Password = request.Password;
-
-            string st = ("SELECT user_id FROM Users where email='" + Email + "' and Password='" + Password + "'");
-
-            DataTable table = new DataTable();
-            DataLogin dt = new DataLogin();
-            string DataSource = _configuration.GetConnectionString("QuickartCon");
-            MySqlDataReader myReader;
-            bool flag = false;
-            using (MySqlConnection mycon = new MySqlConnection(DataSource))
+            try
             {
-                mycon.Open();
-                using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
-                {
-                    myReader = mycommand.ExecuteReader();
-                    table.Load(myReader);
+                string Email = request.Email;
+                string Password = request.Password;
 
-                    myReader.Close();
-                    mycon.Close();
+                string st = ("SELECT user_id FROM Users where email='" + Email + "' and Password='" + Password + "'");
+
+                DataTable table = new DataTable();
+                DataLogin dt = new DataLogin();
+                string DataSource = _configuration.GetConnectionString("QuickartCon");
+                MySqlDataReader myReader;
+                bool flag = false;
+                using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                {
+                    mycon.Open();
+                    using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                    {
+                        myReader = mycommand.ExecuteReader();
+                        table.Load(myReader);
+
+                        myReader.Close();
+                        mycon.Close();
+                    }
+
+                    if (table.Rows.Count > 0)
+                    {
+                        flag = true;
+                        dt.user_id = Convert.ToInt32(table.Rows[0]["user_id"]);
+                    }
                 }
 
-                if (table.Rows.Count > 0)
+                string token = CreateToken(Email);
+                dt.token = token;
+
+                var response = new LoginResponse
                 {
-                    flag = true;
-                    dt.user_id = Convert.ToInt32(table.Rows[0]["user_id"]);
-                }
+                    response_message = (flag == true) ? "User Found" : "User Not Found",
+                    response_code = (flag == true) ? 200 : 404,
+                    data = dt
+                };
+
+                return response;
             }
-
-            string token = CreateToken(Email);
-            dt.token = token;
-
-            var response = new LoginResponse
+            catch (Exception e)
             {
-                response_message = (flag == true) ? "User Found" : "User Not Found",
-                response_code = (flag == true) ? 200 : 404,
-                data = dt
-            };
+                var response = new LoginResponse
+                {
+                    response_code = 404,
+                    response_message = e.ToString()
+                };
 
-            return response;
+                return response;
+            }
             //commen
         }
 
