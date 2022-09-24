@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj": {}
+    "/Users/snehithbootla/Desktop/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj": {}
   },
   "projects": {
-    "/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj": {
+    "/Users/snehithbootla/Desktop/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj",
+        "projectUniqueName": "/Users/snehithbootla/Desktop/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj",
         "projectName": "Quickart_API",
-        "projectPath": "/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj",
+        "projectPath": "/Users/snehithbootla/Desktop/Fall22/IND/Quickart_API/Quickart_API/Quickart_API.csproj",
         "packagesPath": "/Users/snehithbootla/.nuget/packages/",
-        "outputPath": "/Users/snehithbootla/Desktop/IUB/Fall22/IND/Quickart_API/Quickart_API/obj/",
+        "outputPath": "/Users/snehithbootla/Desktop/Fall22/IND/Quickart_API/Quickart_API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/snehithbootla/.nuget/NuGet/NuGet.Config"

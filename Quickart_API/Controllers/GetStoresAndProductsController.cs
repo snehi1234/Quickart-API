@@ -41,8 +41,7 @@ namespace Quickart_API.Controllers
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                string Email = jwtToken.Claims.First(x => x.Type == "id").ToString();
-                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+                string Email = (jwtToken.Claims.First(x => x.Type== "email").Value).ToString();
 
                 return Email;
             }
