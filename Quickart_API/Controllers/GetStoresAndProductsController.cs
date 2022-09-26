@@ -53,7 +53,7 @@ namespace Quickart_API.Controllers
         }
 
 
-        [HttpGet("GetStores", Name = nameof(GetStoresAsync))]
+        [HttpPost("GetStores", Name = nameof(GetStoresAsync))]
         public async Task<ActionResult<GetStoresResponse>> GetStoresAsync([FromBody] GetStoresRequest request)
         {
             try
@@ -101,7 +101,7 @@ namespace Quickart_API.Controllers
                                 s.store_lat = row["store_lat"].ToString();
                                 s.store_long = row["store_long"].ToString();
                                 s.store_name = row["store_name"].ToString();
-
+                                s.store_image = row["store_image"].ToString();
                                 StoreList.Add(s);
                             }
                         }
@@ -130,7 +130,7 @@ namespace Quickart_API.Controllers
 
 
 
-        [HttpGet("GetProducts", Name = nameof(GetProductsAsync))]
+        [HttpPost("GetProducts", Name = nameof(GetProductsAsync))]
         public async Task<ActionResult<GetProductsResponse>> GetProductsAsync([FromBody] GetProductsRequest request)
         {
             try
@@ -207,6 +207,167 @@ namespace Quickart_API.Controllers
 
             }
         }
+
+
+
+        [HttpPost("GetProductDetails", Name = nameof(GetProductDetailsAsync))]
+        public async Task<ActionResult<GetProductDetailsResponse>> GetProductDetailsAsync([FromBody] GetProductDetailsRequest request)
+        {
+            try
+            {
+                string validate_token = validate(request.token);
+                if (validate_token == null)
+                {
+                    var response = new GetProductDetailsResponse
+                    {
+                        response_code = 500,
+                        response_message = "Token Expired"
+                    };
+
+                    return response;
+                }
+                else
+                {
+                    ProductData d = new ProductData();
+                    string barcode = request.barcode;
+                    string st = "select p.product_id, p.product_name, p.product_price, p.product_short_description, sp.product_qty_availability, p.product_image_url from quickart_db.products p, quickart_db.store_product sp where p.product_id = sp.product_id and p.product_barcode = '" + barcode + "'" ;
+                    //string st = "select * from products";
+                    DataTable table = new DataTable();
+                    string DataSource = _configuration.GetConnectionString("QuickartCon");
+                    MySqlDataReader myReader;
+
+                    using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                    {
+                        mycon.Open();
+                        using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                        {
+                            myReader = mycommand.ExecuteReader();
+                            table.Load(myReader);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
+
+                        if (table.Rows.Count > 0)
+                        {
+                            foreach (DataRow row in table.Rows)
+                            {
+                                d.product_id = Convert.ToInt32(row["product_id"].ToString());
+                                d.product_image_url = row["product_image_url"].ToString();
+                                d.product_name = row["product_name"].ToString();
+                                d.product_price = Convert.ToInt32(row["product_price"].ToString());
+                                d.product_short_description = row["product_short_description"].ToString();
+                                d.product_qty_availability = Convert.ToInt32(row["product_qty_availability"]);
+                            }
+                        }
+
+                    }
+
+                    var response = new GetProductDetailsResponse
+                    {
+                        response_code = 200,
+                        response_message = "Data Added",
+                        data = d
+
+                    };
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                var response = new GetProductDetailsResponse
+                {
+                    response_message = e.ToString()
+                };
+
+                return response;
+            }
+        }
+
+
+
+        [HttpPost("GetAddresses", Name = nameof(GetAddressesAsync))]
+        public async Task<ActionResult<GetAddressesResponse>> GetAddressesAsync([FromBody] GetAddressesRequest request)
+        {
+            try
+            {
+                string validate_token = validate(request.token);
+                if (validate_token == null)
+                {
+                    var response = new GetAddressesResponse
+                    {
+                        response_code = 500,
+                        response_message = "Token Expired"
+                    };
+                    return response;
+                }
+                else
+                {
+                    int UserID = request.UserID;
+                    string st = "select address, apt_suit_no, Address_Type from user_address where user_id =" + UserID;
+                    DataTable table = new DataTable();
+                    string DataSource = _configuration.GetConnectionString("QuickartCon");
+                    MySqlDataReader myReader;
+                    Home hm = new Home();
+                    Work wk = new Work();
+                    AddressData d = new AddressData();
+                    using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                    {
+                        mycon.Open();
+                        using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                        {
+                            myReader = mycommand.ExecuteReader();
+                            table.Load(myReader);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
+
+                        if (table.Rows.Count > 0)
+                        {
+                            foreach (DataRow row in table.Rows)
+                            {
+                                if (row["Address_Type"].ToString() == "Home")
+                                {
+                                    hm.address = row["address"].ToString();
+                                    hm.apt_suit_no = row["apt_suit_no"].ToString();
+                                }
+                                else
+                                {
+                                    wk.address = row["address"].ToString();
+                                    wk.apt_suit_no = row["apt_suit_no"].ToString();
+                                }
+                            }
+
+                        }
+
+                    }
+                    d.home = hm;
+                    d.work = wk;
+
+                    var response = new GetAddressesResponse
+                    {
+                        response_code = 200,
+                        data = d,
+                        response_message = "Returned addresses"
+                    };
+                    return response;
+                }
+
+            }
+            catch (Exception e)
+            {
+                var response = new GetAddressesResponse
+                {
+                    response_message = e.ToString()
+                };
+                return response;
+            }
+        }
+
+
+
+
 
     }
 }

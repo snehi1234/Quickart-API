@@ -17,6 +17,7 @@ namespace Quickart_API.Models
         public string? store_email { get; set; }
         public string? store_lat { get; set; }
         public string? store_long { get; set; }
+        public string? store_image { get; set; }
     }
 }
 
