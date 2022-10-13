@@ -4,8 +4,8 @@ namespace Quickart_API.Models
     public class GetStoresResponse
     {
         public int response_code { get; set; }
-        public List<Store>? stores { get; set; }
-        public Exception exception { get; set; }
+        public List<Store>? data { get; set; }
+        public string? response_message { get; set; }
     }
 
     public class Store

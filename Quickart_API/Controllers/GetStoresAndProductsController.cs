@@ -42,8 +42,9 @@ namespace Quickart_API.Controllers
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 string Email = (jwtToken.Claims.First(x => x.Type== "email").Value).ToString();
+                string UserID = (jwtToken.Claims.First(x => x.Type == "UserID").Value).ToString();
 
-                return Email;
+                return UserID;
             }
             catch (Exception e)
             {
@@ -65,7 +66,8 @@ namespace Quickart_API.Controllers
                     validUser = false;
                     var response = new GetStoresResponse
                     {
-                        response_code = 500
+                        response_code = 500,
+                        response_message = "Token authentication Failed"
                     };
 
                     return response;
@@ -110,7 +112,8 @@ namespace Quickart_API.Controllers
                     var response = new GetStoresResponse
                     {
                         response_code = 200,
-                        stores = StoreList
+                        data = StoreList,
+                        response_message = "Data Retrieved"
                     };
 
                     return response;
@@ -122,7 +125,7 @@ namespace Quickart_API.Controllers
             {
                 var response = new GetStoresResponse
                 {
-                    exception = e
+                    response_message = e.ToString()
                 };
                 return response;
             }
@@ -181,6 +184,7 @@ namespace Quickart_API.Controllers
                                 p.product_price = Convert.ToInt32(row["product_price"].ToString());
                                 p.product_short_description = row["product_short_description"].ToString();
                                 p.product_barcode = row["product_barcode"].ToString();
+                                p.product_weight = row["product_weight"].ToString();
 
                                 ProductList.Add(p);
                             }
@@ -190,7 +194,8 @@ namespace Quickart_API.Controllers
                     var response = new GetProductsResponse
                     {
                         response_code = 200,
-                        products = ProductList
+                        data = ProductList,
+                        response_message = "Data returned"
                     };
 
                     return response;
@@ -200,7 +205,7 @@ namespace Quickart_API.Controllers
             {
                 var response = new GetProductsResponse
                 {
-                    exception = e
+                    response_message = e.ToString()
                 };
 
                 return response;
@@ -230,7 +235,7 @@ namespace Quickart_API.Controllers
                 {
                     ProductData d = new ProductData();
                     string barcode = request.barcode;
-                    string st = "select p.product_id, p.product_name, p.product_price, p.product_short_description, sp.product_qty_availability, p.product_image_url from quickart_db.products p, quickart_db.store_product sp where p.product_id = sp.product_id and p.product_barcode = '" + barcode + "'" ;
+                    string st = "select p.product_id, p.product_name, p.product_price, p.product_short_description, sp.product_qty_availability, p.product_image_url, p.product_weight from quickart_db.products p, quickart_db.store_product sp where p.product_id = sp.product_id and p.product_barcode = '" + barcode + "'" ;
                     //string st = "select * from products";
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
@@ -258,6 +263,7 @@ namespace Quickart_API.Controllers
                                 d.product_price = Convert.ToInt32(row["product_price"].ToString());
                                 d.product_short_description = row["product_short_description"].ToString();
                                 d.product_qty_availability = Convert.ToInt32(row["product_qty_availability"]);
+                                d.product_weight = row["product_weight"].ToString(); ;
                             }
                         }
 
@@ -266,7 +272,7 @@ namespace Quickart_API.Controllers
                     var response = new GetProductDetailsResponse
                     {
                         response_code = 200,
-                        response_message = "Data Added",
+                        response_message = "Data Returned",
                         data = d
 
                     };
@@ -286,85 +292,7 @@ namespace Quickart_API.Controllers
 
 
 
-        [HttpPost("GetAddresses", Name = nameof(GetAddressesAsync))]
-        public async Task<ActionResult<GetAddressesResponse>> GetAddressesAsync([FromBody] GetAddressesRequest request)
-        {
-            try
-            {
-                string validate_token = validate(request.token);
-                if (validate_token == null)
-                {
-                    var response = new GetAddressesResponse
-                    {
-                        response_code = 500,
-                        response_message = "Token Expired"
-                    };
-                    return response;
-                }
-                else
-                {
-                    int UserID = request.UserID;
-                    string st = "select address, apt_suit_no, Address_Type from user_address where user_id =" + UserID;
-                    DataTable table = new DataTable();
-                    string DataSource = _configuration.GetConnectionString("QuickartCon");
-                    MySqlDataReader myReader;
-                    Home hm = new Home();
-                    Work wk = new Work();
-                    AddressData d = new AddressData();
-                    using (MySqlConnection mycon = new MySqlConnection(DataSource))
-                    {
-                        mycon.Open();
-                        using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
-                        {
-                            myReader = mycommand.ExecuteReader();
-                            table.Load(myReader);
-
-                            myReader.Close();
-                            mycon.Close();
-                        }
-
-                        if (table.Rows.Count > 0)
-                        {
-                            foreach (DataRow row in table.Rows)
-                            {
-                                if (row["Address_Type"].ToString() == "Home")
-                                {
-                                    hm.address = row["address"].ToString();
-                                    hm.apt_suit_no = row["apt_suit_no"].ToString();
-                                }
-                                else
-                                {
-                                    wk.address = row["address"].ToString();
-                                    wk.apt_suit_no = row["apt_suit_no"].ToString();
-                                }
-                            }
-
-                        }
-
-                    }
-                    d.home = hm;
-                    d.work = wk;
-
-                    var response = new GetAddressesResponse
-                    {
-                        response_code = 200,
-                        data = d,
-                        response_message = "Returned addresses"
-                    };
-                    return response;
-                }
-
-            }
-            catch (Exception e)
-            {
-                var response = new GetAddressesResponse
-                {
-                    response_message = e.ToString()
-                };
-                return response;
-            }
-        }
-
+        
 
 
 

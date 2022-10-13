@@ -10,13 +10,14 @@ namespace Quickart_API.Models
         public string? product_long_description { get; set; }
         public string? product_image_url { get; set; }
         public string? product_barcode { get; set; }
+        public string? product_weight { get; set; }
     }
 
     public class GetProductsResponse
     {
         public int response_code { get; set; }
-        public List<Product>? products { get; set; }
-        public Exception? exception { get; set; }
+        public List<Product>? data { get; set; }
+        public string? response_message { get; set; }
 
     }
 }

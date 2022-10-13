@@ -9,6 +9,7 @@ namespace Quickart_API.Models
         public int product_price { get; set; }
         public string? product_short_description { get; set; }
         public string? product_image_url { get; set; }
+        public string? product_weight { get; set; }
     }
 
     public class GetProductDetailsResponse

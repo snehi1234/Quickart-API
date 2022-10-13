@@ -70,29 +70,14 @@ namespace Quickart_API.Controllers
         }
 
 
-        public String CreateToken(string email)
+        public String CreateToken(int UserID, string email)
         {
-            /*
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, email)
-            };
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds
-            );
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
-            */
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("email", email) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("email", email), new Claim("UserID", UserID.ToString() ) }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = creds
             };
@@ -135,7 +120,7 @@ namespace Quickart_API.Controllers
                     }
                 }
 
-                string token = CreateToken(Email);
+                string token = CreateToken(dt.user_id, Email);
                 dt.token = token;
 
                 var response = new LoginResponse
@@ -172,6 +157,7 @@ namespace Quickart_API.Controllers
             string? LastName = request.LastName;
             string Email = request.Email;
             string Password = request.Password;
+            string UserType = request.UserType;
             Data Dt = new Data();
 
             //check if email exists
@@ -203,7 +189,7 @@ namespace Quickart_API.Controllers
             if (String.IsNullOrEmpty(final_message))
             {
                 // Insert new user into DB
-                st = ("Insert into Users (first_name, last_name, email, Password) values ('" + FirstName + "','" + LastName + "','" + Email + "','" + Password + "')");
+                st = ("Insert into Users (first_name, last_name, email, Password, user_type) values ('" + FirstName + "','" + LastName + "','" + Email + "','" + Password + "','" + UserType + "')");
                 using (MySqlConnection mycon = new MySqlConnection(DataSource))
                 {
                     mycon.Open();
@@ -239,12 +225,13 @@ namespace Quickart_API.Controllers
                         //send email to user
                         SendEmail(Email, "lifelineteam11@gmail.com");
 
+                        Dt.user_id = Convert.ToInt32(table.Rows[0]["user_id"]);
                         //Generate token
-                        string token = CreateToken(Email);
+                        string token = CreateToken(Dt.user_id, Email);
                         Dt.token = token;
                         final_message = "user inserted";
                         resp_code = 200;
-                        Dt.user_id = Convert.ToInt32(table.Rows[0]["user_id"]);
+                        
                     }
                 }
 

@@ -44,20 +44,20 @@ namespace Quickart_API.Controllers
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                string Email = jwtToken.Claims.First(x => x.Type == "id").ToString();
-                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+                string Email = (jwtToken.Claims.First(x => x.Type == "email").Value).ToString();
+                string UserID = (jwtToken.Claims.First(x => x.Type == "UserID").Value).ToString();
 
-                return Email;
+                return UserID;
             }
             catch (Exception e)
             {
-                return e.ToString();
+                return null;
             }
 
         }
 
 
-        [HttpGet("FetchAddress", Name = nameof(FetchAddressAsync))]
+        [HttpPost("FetchAddress", Name = nameof(FetchAddressAsync))]
         public async Task<ActionResult<FetchAddressResponse>> FetchAddressAsync([FromBody] FetchAddressRequest request)
         {
             try
@@ -76,9 +76,9 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    int UserID = request.UserID;
+                    int UserID = Convert.ToInt32(validate_token);
                     List<Address> AddressList = new List<Address>();
-                    string st = ("select * from UserAddress where user_id=" + UserID + ")");
+                    string st = ("select * from user_address where user_id=" + UserID );
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
@@ -151,13 +151,14 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    int UserId = request.user_id;
+                    int UserId = Convert.ToInt32(validate_token);
                     string Address = request.address;
                     string AptSuitNo = request.apt_suit_no;
                     string lat = request.lat;
-                    string @long = request.@long;
+                    string longitude = request.@long;
+                    string AddressType = request.AddressType;
 
-                    string st = ("insert into userAddress values (" + Address + "," + AptSuitNo + "," + lat + "," + @long + ")");
+                    string st = ("insert into user_address values ("+ UserId+", '" + Address + "','" + AptSuitNo + "','" + lat + "','" + longitude + "','" + AddressType + "')");
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
@@ -206,20 +207,22 @@ namespace Quickart_API.Controllers
                     validUser = false;
                     var response = new EditAddressResponse
                     {
-                        response_code = 500
+                        response_code = 500,
+                        response_message = "Token Auth Failed"
                     };
 
                     return response;
                 }
                 else
                 {
-                    int UserId = request.user_id;
+                    int UserId = Convert.ToInt32(validate_token);
                     string Address = request.address;
                     string AptSuitNo = request.apt_suit_no;
                     string lat = request.lat;
                     string @long = request.@long;
+                    string AddressType = request.AddressType;
 
-                    string st = "UPDATE userAddress SET Address =" + Address + " and Apt_Suit_No=" + AptSuitNo + " and lat=" + lat + " and long=" + @long + " WHERE User_id=" + UserId;
+                    string st = "UPDATE user_address SET Address ='" + Address + "', Apt_Suit_No='" + AptSuitNo + "', lat='" + lat + "', longitude='" + @long + "' WHERE User_id=" + UserId + " and Address_Type='"+ AddressType+"'";
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
@@ -234,10 +237,12 @@ namespace Quickart_API.Controllers
                             myReader.Close();
                             mycon.Close();
                         }
+                     
                     }
                     var response = new EditAddressResponse
                     {
-                        response_code = 200
+                        response_code = 200,
+                        response_message = "Address Edited"
                     };
                     return response;
                 }
@@ -247,7 +252,88 @@ namespace Quickart_API.Controllers
                 var response = new EditAddressResponse
                 {
                     response_code = 404,
-                    exception = e
+                    response_message = e.ToString()
+                };
+                return response;
+            }
+        }
+
+
+
+        [HttpPost("GetAddresses", Name = nameof(GetAddressesAsync))]
+        public async Task<ActionResult<GetAddressesResponse>> GetAddressesAsync([FromBody] GetAddressesRequest request)
+        {
+            try
+            {
+                string validate_token = validate(request.token);
+                if (validate_token == null)
+                {
+                    var response = new GetAddressesResponse
+                    {
+                        response_code = 500,
+                        response_message = "Token Expired"
+                    };
+                    return response;
+                }
+                else
+                {
+                    int UserID = Convert.ToInt32(validate_token);
+                    string st = "select address, apt_suit_no, Address_Type from user_address where user_id =" + UserID;
+                    DataTable table = new DataTable();
+                    string DataSource = _configuration.GetConnectionString("QuickartCon");
+                    MySqlDataReader myReader;
+                    Home hm = new Home();
+                    Work wk = new Work();
+                    AddressData d = new AddressData();
+                    using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                    {
+                        mycon.Open();
+                        using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                        {
+                            myReader = mycommand.ExecuteReader();
+                            table.Load(myReader);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
+
+                        if (table.Rows.Count > 0)
+                        {
+                            foreach (DataRow row in table.Rows)
+                            {
+                                if (row["Address_Type"].ToString() == "Home")
+                                {
+                                    hm.address = row["address"].ToString();
+                                    hm.apt_suit_no = row["apt_suit_no"].ToString();
+                                }
+                                else
+                                {
+                                    wk.address = row["address"].ToString();
+                                    wk.apt_suit_no = row["apt_suit_no"].ToString();
+                                }
+                            }
+
+                        }
+
+                    }
+                    d.home = hm;
+                    d.work = wk;
+
+                    var response = new GetAddressesResponse
+                    {
+                        response_code = 200,
+                        data = d,
+                        response_message = "Returned addresses"
+                    };
+                    return response;
+                }
+
+            }
+            catch (Exception e)
+            {
+                var response = new GetAddressesResponse
+                {
+                    response_message = e.ToString()
                 };
                 return response;
             }
