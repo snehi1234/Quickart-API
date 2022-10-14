@@ -166,8 +166,24 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    //string st = update order set order_status_id = 4 where order_id =
-                    var response = new ChangeOrderStatusResponse
+                    string st = "update order set order_status_id = 4 where order_id = '" + request.order_id + "'";
+                    DataTable table = new DataTable();
+                    string DataSource = _configuration.GetConnectionString("QuickartCon");
+                    MySqlDataReader myReader;
+
+                    using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                    {
+                        mycon.Open();
+                        using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                        {
+                            myReader = mycommand.ExecuteReader();
+                            table.Load(myReader);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
+                    }
+                        var response = new ChangeOrderStatusResponse
                     {
                         response_code = 200,
                         response_message = ""

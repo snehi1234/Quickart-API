@@ -60,7 +60,7 @@ namespace Quickart_API.Controllers
             try
             {
                 string validate_token = validate(request.token);
-                string location = request.location;
+                string zipCode = request.zipCode;
                 bool validUser = true;
                 if (validate_token == null)
                 {
@@ -75,7 +75,7 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    string st = ("SELECT * FROM Stores where store_id ='"+location+"'");
+                    string st = ("SELECT * FROM Stores where store_zipcode ='" + zipCode + "'");
                     DataTable table = new DataTable();
                     List<Store> StoreList = new List<Store>();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
