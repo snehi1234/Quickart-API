@@ -10,7 +10,7 @@ namespace Quickart_API.Models
 
     public class Store
     {
-        public int store_id { get; set; }
+        public string store_id { get; set; }
         public string? store_name { get; set; }
         public string? store_address { get; set; }
         public string? store_contact_number { get; set; }

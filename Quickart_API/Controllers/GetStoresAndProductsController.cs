@@ -109,7 +109,7 @@ namespace Quickart_API.Controllers
                                 s.store_address = row["store_address"].ToString();
                                 s.store_contact_number = row["store_contact_number"].ToString();
                                 s.store_email = row["store_email"].ToString();
-                                s.store_id = Convert.ToInt32(row["store_id"]);
+                                s.store_id = row["store_id"].ToString();
                                 s.store_lat = row["store_lat"].ToString();
                                 s.store_long = row["store_long"].ToString();
                                 s.store_name = row["store_name"].ToString();
@@ -169,11 +169,12 @@ namespace Quickart_API.Controllers
                     string st;
                     if (string.IsNullOrEmpty(query))
                     {
-                        st = ("select * from Products where product_id in (select distinct(Product_id) from store_product where store_id = '" + StoreID + "')");
+                        st = ("select * from Products where store_id = (select ID from stores where store_id = '" + StoreID + "')");
+                        
                     }
                     else
                     {
-                        st = ("select * from Products where product_name like '%"+query +"%' and product_id in (select distinct(Product_id) from store_product where store_id = '" + StoreID + "')");
+                        st = ("select * from Products where product_name like '%"+query +"%' and store_id = (select ID from stores where store_id = '" + StoreID + "')");
                     }
                     
                     DataTable table = new DataTable();
@@ -197,7 +198,7 @@ namespace Quickart_API.Controllers
                             foreach (DataRow row in table.Rows)
                             {
                                 Product p = new Product();
-                                p.product_id = Convert.ToInt32(row["product_id"].ToString());
+                                p.product_id = row["product_id"].ToString();
                                 p.product_image_url = row["product_image_url"].ToString();
                                 p.product_long_description = row["product_long_description"].ToString();
                                 p.product_name = row["product_name"].ToString();

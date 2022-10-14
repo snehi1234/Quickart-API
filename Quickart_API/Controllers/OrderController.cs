@@ -139,13 +139,41 @@ namespace Quickart_API.Controllers
 
         }
 
-        /*
+        
         [HttpPost("OrderHistory", Name = nameof(OrderHistoryAsync))]
         public async Task<ActionResult<OrderHistoryResponse>> OrderHistoryAsync([FromBody] OrderHistoryRequest request)
         {
+            try
+            {
+                string validate_token = validate(request.token);
+                bool validUser = true;
+                if (validate_token == null)
+                {
+                    validUser = false;
+                    var response = new OrderHistoryResponse
+                    {
+                        response_code = 500
+                    };
+
+                    return response;
+                }
+                else
+                {
+
+                }
+            }
+            catch (Exception e)
+            {
+                var response = new OrderHistoryResponse
+                {
+                    response_code = 404,
+                    response_message = e.ToString()
+                };
+            return response;
+            }
 
         }
-        */
+        
 
         [HttpPost("ChangeOrderStatus", Name = nameof(ChangeOrderStatusAsync))]
         public async Task<ActionResult<ChangeOrderStatusResponse>> ChangeOrderStatusAsync([FromBody] ChangeOrderStatusRequest request)
