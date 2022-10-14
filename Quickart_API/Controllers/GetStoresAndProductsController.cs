@@ -60,6 +60,7 @@ namespace Quickart_API.Controllers
             try
             {
                 string validate_token = validate(request.token);
+                string location = request.location;
                 bool validUser = true;
                 if (validate_token == null)
                 {
@@ -74,7 +75,7 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    string st = ("SELECT * FROM Stores");
+                    string st = ("SELECT * FROM Stores where store_id ='"+location+"'");
                     DataTable table = new DataTable();
                     List<Store> StoreList = new List<Store>();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
@@ -153,9 +154,19 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    int StoreID = request.StoreID;
+                    string StoreID = request.StoreID;
+                    string query = request.query;
                     List<Product> ProductList = new List<Product>();
-                    string st = ("select * from Products where product_id in (select distinct(Product_id) from store_product where store_id = " + StoreID + ")");
+                    string st;
+                    if (string.IsNullOrEmpty(query))
+                    {
+                        st = ("select * from Products where product_id in (select distinct(Product_id) from store_product where store_id = '" + StoreID + "')");
+                    }
+                    else
+                    {
+                        st = ("select * from Products where product_name like '%"+query +"%' and product_id in (select distinct(Product_id) from store_product where store_id = '" + StoreID + "')");
+                    }
+                    
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;

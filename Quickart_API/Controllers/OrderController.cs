@@ -43,8 +43,9 @@ namespace Quickart_API.Controllers
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 string Email = (jwtToken.Claims.First(x => x.Type == "email").Value).ToString();
+                string UserID = (jwtToken.Claims.First(x => x.Type == "UserID").Value).ToString();
 
-                return Email;
+                return UserID;
             }
             catch (Exception e)
             {
@@ -73,7 +74,48 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                     
+                    List<OrderDetails> order_list = new List<OrderDetails>();
+                    order_list = request.orderDetails;
+
+                    foreach (var order in order_list)
+                    {
+                        string storeId = order.store_id;
+                        foreach (var product in order.products)
+                        {
+                            String prdId = product.product_id;
+                            int prdQty = product.product_qty_cnt;
+                            string st1 = "Insert into quickart_db.orders (order_placed_date, purchase_type, order_status_id, user_id, delivery_person, address_type, phone_number, store_id, payment_reference) values ('" + request.date + "','" + request.purchaseType + "'," + 1 + "," + validate_token+","+ 0 + ",'" + request.address + "','" + request.cellNumber + "','" + storeId + "','" + request.paymentReference + "')";
+                            string st2 = "Insert into quickart_db.ordered_items (select max(o.order_id), sp.store_product_id,"+ prdQty +", p.product_price from orders o, store_product sp, products p where o.store_id = sp.store_id and sp.product_id ='" + prdId + "' and p.product_id ='" + prdId + "')";
+                            DataTable table = new DataTable();
+                            string DataSource = _configuration.GetConnectionString("QuickartCon");
+                            MySqlDataReader myReader;
+
+                            using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                            {
+                                mycon.Open();
+                                using (MySqlCommand mycommand = new MySqlCommand(st1, mycon))
+                                {
+                                    myReader = mycommand.ExecuteReader();
+                                    table.Load(myReader);
+
+                                    myReader.Close();
+                                    mycon.Close();
+                                }
+
+                                mycon.Open();
+                                using (MySqlCommand mycommand = new MySqlCommand(st2, mycon))
+                                {
+                                    myReader = mycommand.ExecuteReader();
+                                    table.Load(myReader);
+
+                                    myReader.Close();
+                                    mycon.Close();
+                                }
+                            }
+
+                        }
+                    }
+
                     var response = new PlaceOrderResponse
                     {
                         response_code = 200,
@@ -81,8 +123,8 @@ namespace Quickart_API.Controllers
                     };
 
                     return response;
+
                 }
-                
             }
             catch (Exception e)
             {
@@ -96,6 +138,60 @@ namespace Quickart_API.Controllers
             }
 
         }
+
+        /*
+        [HttpPost("OrderHistory", Name = nameof(OrderHistoryAsync))]
+        public async Task<ActionResult<OrderHistoryResponse>> OrderHistoryAsync([FromBody] OrderHistoryRequest request)
+        {
+
+        }
+        */
+
+        [HttpPost("ChangeOrderStatus", Name = nameof(ChangeOrderStatusAsync))]
+        public async Task<ActionResult<ChangeOrderStatusResponse>> ChangeOrderStatusAsync([FromBody] ChangeOrderStatusRequest request)
+        {
+            try
+            {
+                string validate_token = validate(request.token);
+                bool validUser = true;
+                if (validate_token == null)
+                {
+                    validUser = false;
+                    var response = new ChangeOrderStatusResponse
+                    {
+                        response_code = 500
+                    };
+
+                    return response;
+                }
+                else
+                {
+                    //string st = update order set order_status_id = 4 where order_id =
+                    var response = new ChangeOrderStatusResponse
+                    {
+                        response_code = 200,
+                        response_message = ""
+                    };
+
+                    return response;
+                }
+
+            }
+            catch (Exception e)
+            {
+                var response = new ChangeOrderStatusResponse
+                {
+                    response_code = 404,
+                    response_message = e.ToString()
+                };
+
+                return response;
+            }
+
+
+
+        }
+
     }
 }
 
