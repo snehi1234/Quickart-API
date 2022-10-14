@@ -139,7 +139,7 @@ namespace Quickart_API.Controllers
 
         }
 
-        
+        /*
         [HttpPost("OrderHistory", Name = nameof(OrderHistoryAsync))]
         public async Task<ActionResult<OrderHistoryResponse>> OrderHistoryAsync([FromBody] OrderHistoryRequest request)
         {
@@ -173,7 +173,7 @@ namespace Quickart_API.Controllers
             }
 
         }
-        
+        */
 
         [HttpPost("ChangeOrderStatus", Name = nameof(ChangeOrderStatusAsync))]
         public async Task<ActionResult<ChangeOrderStatusResponse>> ChangeOrderStatusAsync([FromBody] ChangeOrderStatusRequest request)
