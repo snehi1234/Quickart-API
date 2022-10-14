@@ -166,8 +166,7 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-
-                    string st = "update order set order_status_id = 4 where order_id = '" + request.order_id + "'";
+                    string st = "update orders set order_status_id=(select order_status_id from order_status_types where status='"+request.order_status+"') where order_id = '" + request.order_id + "'";
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
@@ -184,7 +183,8 @@ namespace Quickart_API.Controllers
                             mycon.Close();
                         }
                     }
-                        var response = new ChangeOrderStatusResponse
+
+                    var response = new ChangeOrderStatusResponse
                     {
                         response_code = 200,
                         response_message = ""
@@ -204,10 +204,14 @@ namespace Quickart_API.Controllers
 
                 return response;
             }
-
-
-
         }
+
+
+
+
+
+
+
 
     }
 }
