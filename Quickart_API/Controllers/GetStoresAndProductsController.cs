@@ -75,7 +75,16 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    string st = ("SELECT * FROM Stores where store_zipcode ='" + zipCode + "'");
+                    string st;
+                    if (string.IsNullOrEmpty(zipCode))
+                    {
+                        st = ("SELECT * FROM Stores");
+                    }
+                    else
+                    {
+                        st = ("SELECT * FROM Stores where store_zipcode ='" + zipCode + "'");
+                    }
+                    
                     DataTable table = new DataTable();
                     List<Store> StoreList = new List<Store>();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
