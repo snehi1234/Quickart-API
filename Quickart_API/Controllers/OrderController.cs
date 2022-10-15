@@ -189,7 +189,7 @@ namespace Quickart_API.Controllers
                     foreach (int Id in orderIds)
                     {
                         Datum order = new Datum();
-                        st = "select s.store_name, s.store_image, s.store_address, o.order_placed_date, o.purchase_type, ost.status from quickart_db.orders o, quickart_db.stores s, quickart_db.order_status_types ost where o.order_id = " + Id + " and o.store_id = s.store_id and ost.order_status_id = o.order_status_id;";
+                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url from quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = "+Id+" and o_items.store_product_id = sp.store_product_id and p.product_id = sp.product_id";
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
