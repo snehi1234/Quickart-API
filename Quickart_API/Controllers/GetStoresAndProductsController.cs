@@ -293,13 +293,16 @@ namespace Quickart_API.Controllers
                                 d.product_qty_availability = Convert.ToInt32(row["product_qty_availability"]);
                                 d.product_weight = row["product_weight"].ToString(); ;
                             }
+                            response.data = d;
                         }
+                        else
+                            response.data = null;
 
                     }
 
                     response.response_code = 200;
                     response.response_message = "Data Returned";
-                    response.data = d;
+                    
 
                     return response;
                 }
