@@ -254,10 +254,17 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
+                    var response = new GetProductDetailsResponse();
                     ProductData d = new ProductData();
                     string barcode = request.barcode;
+                    if (String.IsNullOrEmpty(barcode))
+                    {
+                        response.response_code = 200;
+                        response.response_message = "No Data";
+
+                        return response;
+                    }
                     string st = "select p.product_id, p.product_name, p.product_price, p.product_short_description, sp.product_qty_availability, p.product_image_url, p.product_weight from quickart_db.products p, quickart_db.store_product sp where p.product_id = sp.product_id and p.product_barcode = '" + barcode + "'" ;
-                    //string st = "select * from products";
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
@@ -290,13 +297,10 @@ namespace Quickart_API.Controllers
 
                     }
 
-                    var response = new GetProductDetailsResponse
-                    {
-                        response_code = 200,
-                        response_message = "Data Returned",
-                        data = d
+                    response.response_code = 200;
+                    response.response_message = "Data Returned";
+                    response.data = d;
 
-                    };
                     return response;
                 }
             }

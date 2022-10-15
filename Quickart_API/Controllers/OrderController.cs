@@ -83,7 +83,7 @@ namespace Quickart_API.Controllers
                         foreach (var product in order.products)
                         {
                             String prdId = product.product_id;
-                            int prdQty = product.product_qty_cnt;
+                            int prdQty = product.product_quantity;
                             string st1 = "Insert into quickart_db.orders (order_placed_date, purchase_type, order_status_id, user_id, delivery_person, address_type, phone_number, store_id, payment_reference) values ('" + request.date + "','" + request.purchaseType + "'," + 1 + "," + validate_token + "," + 0 + ",'" + request.address + "','" + request.cellNumber + "','" + storeId + "','" + request.paymentReference + "')";
                             string st2 = "Insert into quickart_db.ordered_items (select max(o.order_id), sp.store_product_id," + prdQty + ", p.product_price from orders o, store_product sp, products p where o.store_id = sp.store_id and sp.product_id ='" + prdId + "' and p.product_id ='" + prdId + "')";
                             DataTable table = new DataTable();
@@ -303,13 +303,15 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
-                    string st = "update orders set order_status_id=(select order_status_id from order_status_types where status='" + request.order_status + "') where order_id = '" + request.order_id + "'";
+                    //string st = "update orders set order_status_id=(select order_status_id from order_status_types where status='" + request.order_status + "') where order_id = '" + request.order_id + "'";
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
+                    string st;
 
                     using (MySqlConnection mycon = new MySqlConnection(DataSource))
                     {
+                        st = "update orders set order_status_id=(select order_status_id from order_status_types where status='" + request.order_status + "') where order_id = '" + request.order_id + "'";
                         mycon.Open();
                         using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
                         {
@@ -483,6 +485,98 @@ namespace Quickart_API.Controllers
                 return response;
             }
 
+        }
+
+
+        [HttpPost("Orders", Name = nameof(OrdersAsync))]
+        public async Task<ActionResult<OrdersResponse>> OrdersAsync([FromBody] OrdersRequest request)
+        {
+            try
+            {
+                string validate_token = validate(request.token);
+                bool validUser = true;
+                if (validate_token == null)
+                {
+                    validUser = false;
+                    var response = new OrdersResponse
+                    {
+                        response_code = 500
+                    };
+
+                    return response;
+                }
+                else
+                {
+                    int usrId = Convert.ToInt32(validate_token);
+                    List<DeliveryPerson> dp_list = new List<DeliveryPerson>();
+                    List<Order> ord_list = new List<Order>();
+                    string st;
+                    DataTable table;
+                    string DataSource = _configuration.GetConnectionString("QuickartCon");
+                    MySqlDataReader myReader;
+
+                    using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                    {
+                        table = new DataTable();
+                        st = "select user_id, concat(first_name,' ',last_name) as name from users where user_type='Delivery Person'; ";
+                        mycon.Open();
+                        using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                        {
+                            myReader = mycommand.ExecuteReader();
+                            table.Load(myReader);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
+                        
+                        foreach (DataRow row in table.Rows)
+                        {
+                            DeliveryPerson dp = new DeliveryPerson();
+                            if (row["user_id"] != DBNull.Value)  dp.user_id = Convert.ToInt32(row["user_id"]);
+                            dp.name = row["name"].ToString();
+                            dp_list.Add(dp);
+                        }
+
+                        table = new DataTable();
+                        st = "select o.order_id, concat(u.first_name,' ', u.last_name) as name from quickart_db.orders o, quickart_db.users u where o.order_status_id=1 and o.user_id = u.user_id;";
+                        mycon.Open();
+                        using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                        {
+                            myReader = mycommand.ExecuteReader();
+                            table.Load(myReader);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
+                        
+                        foreach (DataRow row in table.Rows)
+                        {
+                            Order ord = new Order();
+                            if (row["order_id"] != DBNull.Value)  ord.order_id = Convert.ToInt32(row["order_id"]);
+                            ord.order_by = row["name"].ToString();
+                            ord_list.Add(ord);
+                        }
+                    }
+                    var response = new OrdersResponse
+                    {
+                        response_code = 200,
+                        response_message = "Returned",
+                        delivery_people = dp_list,
+                        orders = ord_list
+                    };
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                var response = new OrdersResponse
+                {
+                    response_code = 404,
+                    response_message = e.ToString()
+                };
+
+                return response;
+            }
         }
     }
 }
