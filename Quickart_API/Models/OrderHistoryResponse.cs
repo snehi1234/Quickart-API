@@ -3,7 +3,7 @@ namespace Quickart_API.Models
 {
     public class OrderProduct
     {
-        public int productId { get; set; }
+        public string productId { get; set; }
         public int productQtyCnt { get; set; }
         public string productName { get; set; }
         public int productPrice { get; set; }
@@ -15,11 +15,13 @@ namespace Quickart_API.Models
         public string storeName { get; set; }
         public string storeImg { get; set; }
         public string storeAddress { get; set; }
+
         public int orderValue { get; set; }
         public int noOfProducts { get; set; }
+
         public string orderDate { get; set; }
         public string orderType { get; set; }
-        public string orderId { get; set; }
+        public int orderId { get; set; }
         public string orderStatus { get; set; }
         public List<OrderProduct> orderProducts { get; set; }
     }
