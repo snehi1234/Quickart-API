@@ -86,12 +86,13 @@ namespace Quickart_API.Controllers
                             int prdQty = product.product_quantity;
                             string st1 = "Insert into quickart_db.orders (order_placed_date, purchase_type, order_status_id, user_id, delivery_person, address_type, phone_number, store_id, payment_reference) values ('" + request.date + "','" + request.purchaseType + "'," + 1 + "," + validate_token + "," + 0 + ",'" + request.address + "','" + request.cellNumber + "','" + storeId + "','" + request.paymentReference + "')";
                             string st2 = "Insert into quickart_db.ordered_items (select max(o.order_id), sp.store_product_id," + prdQty + ", p.product_price from orders o, store_product sp, products p where o.store_id = sp.store_id and sp.product_id ='" + prdId + "' and p.product_id ='" + prdId + "')";
-                            DataTable table = new DataTable();
+                            DataTable table;
                             string DataSource = _configuration.GetConnectionString("QuickartCon");
                             MySqlDataReader myReader;
 
                             using (MySqlConnection mycon = new MySqlConnection(DataSource))
                             {
+                                table = new DataTable();
                                 mycon.Open();
                                 using (MySqlCommand mycommand = new MySqlCommand(st1, mycon))
                                 {
@@ -102,6 +103,7 @@ namespace Quickart_API.Controllers
                                     mycon.Close();
                                 }
 
+                                table = new DataTable();
                                 mycon.Open();
                                 using (MySqlCommand mycommand = new MySqlCommand(st2, mycon))
                                 {
@@ -189,7 +191,7 @@ namespace Quickart_API.Controllers
                     foreach (int Id in orderIds)
                     {
                         Datum order = new Datum();
-                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url from quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = "+Id+" and o_items.store_product_id = sp.store_product_id and p.product_id = sp.product_id";
+                        st = "select s.store_name, s.store_image, s.store_address, o.order_placed_date, o.purchase_type, ost.status from quickart_db.orders o, quickart_db.stores s, quickart_db.order_status_types ost where o.order_id = " + Id + " and o.store_id = s.store_id and ost.order_status_id = o.order_status_id;";
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
