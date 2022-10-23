@@ -76,33 +76,39 @@ namespace Quickart_API.Controllers
                 {
                     List<OrderDetails> order_list = new List<OrderDetails>();
                     order_list = request.orderDetails;
+                    DataTable table;
+                    table = new DataTable();
+                    string DataSource = _configuration.GetConnectionString("QuickartCon");
+                    MySqlDataReader myReader;
+
+                    string storeId = request.storeId;
+                    string st = "Insert into quickart_db.orders (order_placed_date, purchase_type, order_status_id, user_id, delivery_person, address_type, phone_number, store_id, payment_reference) values ('" + request.date + "','" + request.purchaseType + "'," + 1 + "," + validate_token + "," + 0 + ",'" + request.address + "','" + request.cellNumber + "','" + storeId + "','" + request.paymentReference + "')";
 
                     foreach (var order in order_list)
                     {
-                        string storeId = order.store_id;
+                        using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                        {
+                            table = new DataTable();
+                            mycon.Open();
+                            using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                            {
+                                myReader = mycommand.ExecuteReader();
+                                table.Load(myReader);
+
+                                myReader.Close();
+                                mycon.Close();
+                            }
+                        }
+
                         foreach (var product in order.products)
                         {
                             String prdId = product.product_id;
                             int prdQty = product.product_quantity;
-                            string st1 = "Insert into quickart_db.orders (order_placed_date, purchase_type, order_status_id, user_id, delivery_person, address_type, phone_number, store_id, payment_reference) values ('" + request.date + "','" + request.purchaseType + "'," + 1 + "," + validate_token + "," + 0 + ",'" + request.address + "','" + request.cellNumber + "','" + storeId + "','" + request.paymentReference + "')";
                             string st2 = "Insert into quickart_db.ordered_items (select max(o.order_id), sp.store_product_id," + prdQty + ", p.product_price from orders o, store_product sp, products p where o.store_id = sp.store_id and sp.product_id ='" + prdId + "' and p.product_id ='" + prdId + "')";
-                            DataTable table;
-                            string DataSource = _configuration.GetConnectionString("QuickartCon");
-                            MySqlDataReader myReader;
+                            
 
                             using (MySqlConnection mycon = new MySqlConnection(DataSource))
                             {
-                                table = new DataTable();
-                                mycon.Open();
-                                using (MySqlCommand mycommand = new MySqlCommand(st1, mycon))
-                                {
-                                    myReader = mycommand.ExecuteReader();
-                                    table.Load(myReader);
-
-                                    myReader.Close();
-                                    mycon.Close();
-                                }
-
                                 table = new DataTable();
                                 mycon.Open();
                                 using (MySqlCommand mycommand = new MySqlCommand(st2, mycon))
@@ -262,6 +268,8 @@ namespace Quickart_API.Controllers
                             }
                         }
                         order.orderProducts = ops;
+
+                        data.Add(order);
 
                     }
                     response.data = data;

@@ -9,7 +9,6 @@ namespace Quickart_API.Models
 
     public class OrderDetails
     {
-        public string store_id { get; set; }
         public List<Products> products { get; set; }
     }
 
@@ -19,6 +18,7 @@ namespace Quickart_API.Models
         public string paymentType { get; set; }
         public string paymentReference { get; set; }
         public string date { get; set; }
+        public string storeId { get; set; }
         public string purchaseType { get; set; }
         public string address { get; set; }
         public string cellNumber { get; set; }
