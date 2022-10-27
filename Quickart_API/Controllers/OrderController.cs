@@ -246,7 +246,7 @@ namespace Quickart_API.Controllers
 
                         //list of products
                         List<OrderProduct> ops = new List<OrderProduct>();
-                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url from quickart_db.orders o, quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = "+Id+" and o_items.store_product_id = sp.store_product_id and sp.product_id=p.product_id; ";
+                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url, p.product_weight from quickart_db.orders o, quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = "+Id+" and o_items.store_product_id = sp.store_product_id and sp.product_id=p.product_id; ";
                         table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
@@ -269,6 +269,7 @@ namespace Quickart_API.Controllers
                                     op.productPrice = Convert.ToInt32(row["product_price"]);
                                 op.productName = row["product_name"].ToString();
                                 op.productImageUrl = row["product_image_url"].ToString();
+                                op.productWeight = row["product_weight"].ToString();
 
                                 ops.Add(op);
                             }
