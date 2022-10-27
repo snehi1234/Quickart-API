@@ -224,7 +224,7 @@ namespace Quickart_API.Controllers
 
 
                         // OrderValue, NoOfProducts
-                        st = "select sum(product_qty_cnt) as no_of_products, sum(product_qty_cnt*product_price) as order_value from quickart_db.ordered_items where order_id = " + Id + ";";
+                         st = "select sum(product_qty_cnt) as no_of_products, sum(product_qty_cnt*product_price) as order_value from quickart_db.ordered_items where order_id = " + Id + ";";
                         table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
@@ -246,7 +246,7 @@ namespace Quickart_API.Controllers
 
                         //list of products
                         List<OrderProduct> ops = new List<OrderProduct>();
-                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url, p.product_weight from quickart_db.orders o, quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = "+Id+" and o_items.store_product_id = sp.store_product_id and sp.product_id=p.product_id; ";
+                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url, p.product_weight from quickart_db.ordered_items o_items join quickart_db.store_product sp on o_items.store_product_id = sp.store_product_id join quickart_db.products p on sp.product_id=p.product_id where o_items.order_id = "+Id+";";
                         table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
