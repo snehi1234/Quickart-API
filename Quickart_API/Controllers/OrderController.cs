@@ -198,6 +198,7 @@ namespace Quickart_API.Controllers
                     {
                         Datum order = new Datum();
                         st = "select s.store_name, s.store_image, s.store_address, o.order_placed_date, o.purchase_type, ost.status from quickart_db.orders o, quickart_db.stores s, quickart_db.order_status_types ost where o.order_id = " + Id + " and o.store_id = s.store_id and ost.order_status_id = o.order_status_id;";
+                        table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
@@ -221,7 +222,10 @@ namespace Quickart_API.Controllers
                             }
                         }
 
+
+                        // OrderValue, NoOfProducts
                         st = "select sum(product_qty_cnt) as no_of_products, sum(product_qty_cnt*product_price) as order_value from quickart_db.ordered_items where order_id = " + Id + ";";
+                        table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
@@ -240,8 +244,10 @@ namespace Quickart_API.Controllers
                             }
                         }
 
+                        //list of products
                         List<OrderProduct> ops = new List<OrderProduct>();
-                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url from quickart_db.orders o, quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = 1 and o_items.store_product_id = sp.store_product_id and p.id = sp.product_id; ";
+                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url from quickart_db.orders o, quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = "+Id+" and o_items.store_product_id = sp.store_product_id and sp.product_id=p.product_id; ";
+                        table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
