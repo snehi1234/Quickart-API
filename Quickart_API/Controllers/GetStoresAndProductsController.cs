@@ -202,7 +202,7 @@ namespace Quickart_API.Controllers
                                 p.product_image_url = row["product_image_url"].ToString();
                                 p.product_long_description = row["product_long_description"].ToString();
                                 p.product_name = row["product_name"].ToString();
-                                p.product_price = Convert.ToInt32(row["product_price"].ToString());
+                                p.product_price = Convert.ToDouble(row["product_price"].ToString());
                                 p.product_short_description = row["product_short_description"].ToString();
                                 p.product_barcode = row["product_barcode"].ToString();
                                 p.product_weight = row["product_weight"].ToString();
