@@ -468,9 +468,9 @@ namespace Quickart_API.Controllers
                                 mycon.Close();
                             }
 
+                            ProductDetails op = new ProductDetails();
                             foreach (DataRow row in table.Rows)
                             {
-                                ProductDetails op = new ProductDetails();
                                 op.productId = row["product_id"].ToString();
                                 if (row["product_qty_cnt"] != DBNull.Value)
                                     op.productQtyCnt = Convert.ToInt32(row["product_qty_cnt"]);
@@ -479,8 +479,8 @@ namespace Quickart_API.Controllers
                                 op.productName = row["product_name"].ToString();
                                 op.productImageUrl = row["product_image_url"].ToString();
 
-                                ops.Add(op);
                             }
+                            ops.Add(op);
                         }
                         order.orderProducts = ops;
 
