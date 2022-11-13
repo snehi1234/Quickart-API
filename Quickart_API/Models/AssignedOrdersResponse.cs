@@ -16,7 +16,7 @@ namespace Quickart_API.Models
         public string storeImg { get; set; }
         public string storeAddress { get; set; }
 
-        public int orderValue { get; set; }
+        public double orderValue { get; set; }
         public int noOfProducts { get; set; }
 
         public string orderDate { get; set; }

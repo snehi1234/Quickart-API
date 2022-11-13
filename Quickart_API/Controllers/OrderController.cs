@@ -409,9 +409,11 @@ namespace Quickart_API.Controllers
                     }
 
                     List<AssignedOrders> data = new List<AssignedOrders>();
+                    
                     foreach (int Id in orderIds)
                     {
                         AssignedOrders order = new AssignedOrders();
+                        table = new DataTable();
                         st = "select s.store_name, s.store_image, s.store_address, o.order_placed_date, o.purchase_type, ost.status from quickart_db.orders o, quickart_db.stores s, quickart_db.order_status_types ost where o.order_id = " + Id + " and o.store_id = s.store_id and ost.order_status_id = o.order_status_id;";
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
@@ -436,7 +438,9 @@ namespace Quickart_API.Controllers
                             }
                         }
 
+
                         st = "select sum(product_qty_cnt) as no_of_products, sum(product_qty_cnt*product_price) as order_value from quickart_db.ordered_items where order_id = " + Id + ";";
+                        table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
@@ -451,12 +455,14 @@ namespace Quickart_API.Controllers
                             foreach (DataRow row in table.Rows)
                             {
                                 if (row["no_of_products"] != DBNull.Value) order.noOfProducts = Convert.ToInt32(row["no_of_products"]);
-                                if (row["order_value"] != DBNull.Value) order.orderValue = Convert.ToInt32(row["order_value"]);
+                                if (row["order_value"] != DBNull.Value) order.orderValue = Convert.ToDouble(row["order_value"]);
                             }
                         }
 
+
                         List<ProductDetails> ops = new List<ProductDetails>();
-                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url from quickart_db.orders o, quickart_db.ordered_items o_items, quickart_db.store_product sp, quickart_db.products p where o_items.order_id = 1 and o_items.store_product_id = sp.store_product_id and p.id = sp.product_id; ";
+                        table = new DataTable();
+                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url from ordered_items o_items join store_product sp on o_items.store_product_id = sp.store_product_id  join products p ON p.product_id = sp.product_id where o_items.order_id ="+Id+" ;";
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
@@ -468,9 +474,10 @@ namespace Quickart_API.Controllers
                                 mycon.Close();
                             }
 
-                            ProductDetails op = new ProductDetails();
+                            
                             foreach (DataRow row in table.Rows)
                             {
+                                ProductDetails op = new ProductDetails();
                                 op.productId = row["product_id"].ToString();
                                 if (row["product_qty_cnt"] != DBNull.Value)
                                     op.productQtyCnt = Convert.ToInt32(row["product_qty_cnt"]);
@@ -478,11 +485,11 @@ namespace Quickart_API.Controllers
                                     op.productPrice = Convert.ToInt32(row["product_price"]);
                                 op.productName = row["product_name"].ToString();
                                 op.productImageUrl = row["product_image_url"].ToString();
-
+                                ops.Add(op);
                             }
-                            ops.Add(op);
+                            
+                            order.orderProducts = ops;
                         }
-                        order.orderProducts = ops;
 
                         data.Add(order);
 
