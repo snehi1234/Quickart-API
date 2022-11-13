@@ -414,7 +414,7 @@ namespace Quickart_API.Controllers
                     {
                         AssignedOrders order = new AssignedOrders();
                         table = new DataTable();
-                        st = "select s.store_name, s.store_image, s.store_address, o.order_placed_date, o.purchase_type, ost.status from quickart_db.orders o, quickart_db.stores s, quickart_db.order_status_types ost where o.order_id = " + Id + " and o.store_id = s.store_id and ost.order_status_id = o.order_status_id;";
+                        st = "select s.store_name, s.store_image, s.store_address, o.order_placed_date, o.purchase_type, ost.status, ua.address from quickart_db.orders o, quickart_db.stores s, quickart_db.order_status_types ost, quickart_db.user_address ua where o.order_id = " + Id + " and o.store_id = s.store_id and ost.order_status_id = o.order_status_id and o.user_id = ua.user_id and o.address_type = ua.Address_Type;";
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
@@ -434,6 +434,7 @@ namespace Quickart_API.Controllers
                                 order.orderDate = row["order_placed_date"].ToString();
                                 order.orderType = row["purchase_type"].ToString();
                                 order.orderStatus = row["status"].ToString();
+                                order.Address = row["address"].ToString();
                                 order.orderId = Id;
                             }
                         }
