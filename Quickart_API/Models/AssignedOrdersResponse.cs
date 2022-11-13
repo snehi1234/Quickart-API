@@ -8,6 +8,7 @@ namespace Quickart_API.Models
         public string productName { get; set; }
         public int productPrice { get; set; }
         public string productImageUrl { get; set; }
+        public string productWeight { get; set; }
     }
 
     public class AssignedOrders
