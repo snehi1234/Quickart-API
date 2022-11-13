@@ -483,7 +483,7 @@ namespace Quickart_API.Controllers
                                 if (row["product_qty_cnt"] != DBNull.Value)
                                     op.productQtyCnt = Convert.ToInt32(row["product_qty_cnt"]);
                                 if (row["product_price"] != DBNull.Value)
-                                    op.productPrice = Convert.ToInt32(row["product_price"]);
+                                    op.productPrice = Convert.ToDouble(row["product_price"]);
                                 op.productName = row["product_name"].ToString();
                                 op.productImageUrl = row["product_image_url"].ToString();
                                 op.productWeight = row["product_weight"].ToString();
