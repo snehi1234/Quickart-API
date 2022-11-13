@@ -3,7 +3,7 @@ namespace Quickart_API.Models
 {
     public class ProductData
     {
-        public int product_id { get; set; }
+        public string product_id { get; set; }
         public int product_qty_availability { get; set; }
         public string? product_name { get; set; }
         public int product_price { get; set; }

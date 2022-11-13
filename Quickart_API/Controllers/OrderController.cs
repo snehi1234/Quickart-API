@@ -386,7 +386,7 @@ namespace Quickart_API.Controllers
                     List<int> orderIds = new List<int>();
                     string st;
                     var response = new AssignedOrdersResponse();
-                    st = "select order_id from orders where user_id=" + userId + " and order_status_id in (2, 3);";
+                    st = "select order_id from orders where delivery_person=" + userId + " and order_status_id in (2, 3);";
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
@@ -483,6 +483,8 @@ namespace Quickart_API.Controllers
                             }
                         }
                         order.orderProducts = ops;
+
+                        data.Add(order);
 
                     }
                     response.AssignedOrders = data;

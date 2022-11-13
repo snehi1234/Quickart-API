@@ -285,10 +285,10 @@ namespace Quickart_API.Controllers
                         {
                             foreach (DataRow row in table.Rows)
                             {
-                                d.product_id = Convert.ToInt32(row["product_id"].ToString());
+                                d.product_id = row["product_id"].ToString();
                                 d.product_image_url = row["product_image_url"].ToString();
                                 d.product_name = row["product_name"].ToString();
-                                d.product_price = Convert.ToInt32(row["product_price"].ToString());
+                                d.product_price = Convert.ToInt32(row["product_price"]);
                                 d.product_short_description = row["product_short_description"].ToString();
                                 d.product_qty_availability = Convert.ToInt32(row["product_qty_availability"]);
                                 d.product_weight = row["product_weight"].ToString(); ;
@@ -317,11 +317,6 @@ namespace Quickart_API.Controllers
                 return response;
             }
         }
-
-
-
-        
-
 
 
 
