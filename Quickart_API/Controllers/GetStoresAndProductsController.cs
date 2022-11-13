@@ -264,7 +264,7 @@ namespace Quickart_API.Controllers
 
                         return response;
                     }
-                    string st = "select p.product_id, p.product_name, p.product_price, p.product_short_description, sp.product_qty_availability, p.product_image_url, p.product_weight from quickart_db.products p, quickart_db.store_product sp, quickart_db.stores s where p.product_id = sp.product_id and p.product_barcode='" + barcode + "' and s.store_id='"+request.storeId+ "' and s.id =  p.store_id;";
+                    string st = "select p.product_id, p.product_name, p.product_price, p.product_short_description, p.product_image_url, p.product_weight from quickart_db.products p, quickart_db.store_product sp, quickart_db.stores s where p.product_id = sp.product_id and p.product_barcode='" + barcode + "' and s.store_id='"+request.storeId+ "' and s.id =  p.store_id;";
                     DataTable table = new DataTable();
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
@@ -290,7 +290,7 @@ namespace Quickart_API.Controllers
                                 d.product_name = row["product_name"].ToString();
                                 d.product_price = Convert.ToInt32(row["product_price"]);
                                 d.product_short_description = row["product_short_description"].ToString();
-                                d.product_qty_availability = Convert.ToInt32(row["product_qty_availability"]);
+                                //d.product_qty_availability = Convert.ToInt32(row["product_qty_availability"]);
                                 d.product_weight = row["product_weight"].ToString(); ;
                             }
                             response.data = d;
