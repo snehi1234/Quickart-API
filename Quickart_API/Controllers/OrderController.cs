@@ -656,7 +656,6 @@ namespace Quickart_API.Controllers
         }
 
 
-
         [HttpPost("ModifyOrder", Name = nameof(ModifyOrderAsync))]
         public async Task<ActionResult<ModifyOrderResponse>> ModifyOrderAsync([FromBody] ModifyOrderRequest request)
         {
@@ -676,13 +675,14 @@ namespace Quickart_API.Controllers
                 }
                 else
                 {
+                    int userId = request.user_id;
                     List<int> orderIds = new List<int>();
                     orderIds = request.order_ids;
                     string DataSource = _configuration.GetConnectionString("QuickartCon");
                     MySqlDataReader myReader;
                     foreach (int Id in orderIds)
                     {
-                        string st = "update quickart_db.orders set order_status_id=2 where order_id=" + Id;
+                        string st = "update quickart_db.orders set order_status_id=2, delivery_person="+ userId +" where order_id=" + Id;
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
