@@ -17,6 +17,11 @@ namespace Quickart_API.Models
         public string? store_address_long { get; set; }
         public double? order_value { get; set; }
         public int? total_items { get; set; }
+
+        public string apt_number { get; set; }
+        public string delivery_address { get; set; }
+        public string delivery_add_lat { get; set; }
+        public string delivery_add_long { get; set; }
     }
 
     public class OrdersResponse

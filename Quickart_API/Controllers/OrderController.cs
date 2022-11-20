@@ -607,6 +607,27 @@ namespace Quickart_API.Controllers
                                 ord.total_items = Convert.ToInt32(row1["no_of_products"]);
                             }
 
+
+                            // Delivery Address details
+                            st = "select ua.address, ua.apt_suit_no, ua.lat, ua.longitude from quickart_db.orders o join quickart_db.user_address ua on o.user_id = ua.user_id and o.address_type = ua.Address_Type and order_id ="+ord.order_id;
+                            table = new DataTable();
+                            mycon.Open();
+                            using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                            {
+                                myReader = mycommand.ExecuteReader();
+                                table.Load(myReader);
+                                myReader.Close();
+                                mycon.Close();
+                            }
+                            foreach (DataRow row1 in table.Rows)
+                            {
+                                ord.delivery_address = Convert.ToString(row1["address"]);
+                                ord.apt_number = Convert.ToString(row1["apt_suit_no"]) ;
+                                ord.delivery_add_lat = Convert.ToString(row1["lat"]);
+                                ord.delivery_add_long = Convert.ToString(row1["longitude"]);
+                            }
+
+
                             ord_list.Add(ord);
                         }
 
