@@ -105,7 +105,7 @@ namespace Quickart_API.Controllers
                             String prdId = product.product_id;
                             int prdQty = product.product_quantity;
                             string st2 = "Insert into quickart_db.ordered_items (select max(o.order_id), sp.store_product_id," + prdQty + ", p.product_price from orders o, store_product sp, products p where o.store_id = sp.store_id and sp.product_id ='" + prdId + "' and p.product_id ='" + prdId + "')";
-                            
+
 
                             using (MySqlConnection mycon = new MySqlConnection(DataSource))
                             {
@@ -224,7 +224,7 @@ namespace Quickart_API.Controllers
 
 
                         // OrderValue, NoOfProducts
-                         st = "select sum(product_qty_cnt) as no_of_products, sum(product_qty_cnt*product_price) as order_value from quickart_db.ordered_items where order_id = " + Id + ";";
+                        st = "select sum(product_qty_cnt) as no_of_products, sum(product_qty_cnt*product_price) as order_value from quickart_db.ordered_items where order_id = " + Id + ";";
                         table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
@@ -246,7 +246,7 @@ namespace Quickart_API.Controllers
 
                         //list of products
                         List<OrderProduct> ops = new List<OrderProduct>();
-                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url, p.product_weight from quickart_db.ordered_items o_items join quickart_db.store_product sp on o_items.store_product_id = sp.store_product_id join quickart_db.products p on sp.product_id=p.product_id where o_items.order_id = "+Id+";";
+                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url, p.product_weight from quickart_db.ordered_items o_items join quickart_db.store_product sp on o_items.store_product_id = sp.store_product_id join quickart_db.products p on sp.product_id=p.product_id where o_items.order_id = " + Id + ";";
                         table = new DataTable();
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
@@ -409,7 +409,7 @@ namespace Quickart_API.Controllers
                     }
 
                     List<AssignedOrders> data = new List<AssignedOrders>();
-                    
+
                     foreach (int Id in orderIds)
                     {
                         AssignedOrders order = new AssignedOrders();
@@ -463,7 +463,7 @@ namespace Quickart_API.Controllers
 
                         List<ProductDetails> ops = new List<ProductDetails>();
                         table = new DataTable();
-                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url, p.product_weight from ordered_items o_items join store_product sp on o_items.store_product_id = sp.store_product_id  join products p ON p.product_id = sp.product_id where o_items.order_id =" + Id+" ;";
+                        st = "select sp.product_id, o_items.product_qty_cnt, p.product_price, p.product_name, p.product_image_url, p.product_weight from ordered_items o_items join store_product sp on o_items.store_product_id = sp.store_product_id  join products p ON p.product_id = sp.product_id where o_items.order_id =" + Id + " ;";
                         using (MySqlConnection mycon = new MySqlConnection(DataSource))
                         {
                             mycon.Open();
@@ -475,7 +475,7 @@ namespace Quickart_API.Controllers
                                 mycon.Close();
                             }
 
-                            
+
                             foreach (DataRow row in table.Rows)
                             {
                                 ProductDetails op = new ProductDetails();
@@ -489,7 +489,7 @@ namespace Quickart_API.Controllers
                                 op.productWeight = row["product_weight"].ToString();
                                 ops.Add(op);
                             }
-                            
+
                             order.orderProducts = ops;
                         }
 
@@ -545,6 +545,7 @@ namespace Quickart_API.Controllers
 
                     using (MySqlConnection mycon = new MySqlConnection(DataSource))
                     {
+                        // Delivery Persons
                         table = new DataTable();
                         st = "select user_id, concat(first_name,' ',last_name) as name from users where user_type='Delivery Person'; ";
                         mycon.Open();
@@ -556,17 +557,18 @@ namespace Quickart_API.Controllers
                             myReader.Close();
                             mycon.Close();
                         }
-                        
+
                         foreach (DataRow row in table.Rows)
                         {
                             DeliveryPerson dp = new DeliveryPerson();
-                            if (row["user_id"] != DBNull.Value)  dp.user_id = Convert.ToInt32(row["user_id"]);
+                            if (row["user_id"] != DBNull.Value) dp.user_id = Convert.ToInt32(row["user_id"]);
                             dp.name = row["name"].ToString();
                             dp_list.Add(dp);
                         }
 
+                        // Order Details
                         table = new DataTable();
-                        st = "select o.order_id, concat(u.first_name,' ', u.last_name) as name from quickart_db.orders o, quickart_db.users u where o.order_status_id=1 and o.user_id = u.user_id;";
+                        st = "select o.order_id, s.store_image, s.store_name, s.store_address, s.store_lat, s.store_long from quickart_db.orders o join quickart_db.stores s on o.store_id = s.store_id where o.order_status_id=1 ;";
                         mycon.Open();
                         using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
                         {
@@ -576,14 +578,39 @@ namespace Quickart_API.Controllers
                             myReader.Close();
                             mycon.Close();
                         }
-                        
+
                         foreach (DataRow row in table.Rows)
                         {
                             Order ord = new Order();
-                            if (row["order_id"] != DBNull.Value)  ord.order_id = Convert.ToInt32(row["order_id"]);
-                            ord.order_by = row["name"].ToString();
+                            if (row["order_id"] != DBNull.Value)
+                                ord.order_id = Convert.ToInt32(row["order_id"]);
+                            ord.store_img = row["store_image"].ToString();
+                            ord.store_name = row["store_name"].ToString();
+                            ord.store_address = row["store_address"].ToString();
+                            ord.store_address_lat = row["store_lat"].ToString();
+                            ord.store_address_long = row["store_long"].ToString();
+
+                            // Order Value, No of products
+                            st = "select sum(product_qty_cnt) as no_of_products, sum(product_qty_cnt*product_price) as order_value from quickart_db.ordered_items where order_id="+ ord.order_id;
+                            table = new DataTable();
+                            mycon.Open();
+                            using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                            {
+                                myReader = mycommand.ExecuteReader();
+                                table.Load(myReader);
+                                myReader.Close();
+                                mycon.Close();
+                            }
+                            foreach (DataRow row1 in table.Rows)
+                            {
+                                ord.order_value = Convert.ToDouble(row1["order_value"]); ;
+                                ord.total_items = Convert.ToInt32(row1["no_of_products"]);
+                            }
+
                             ord_list.Add(ord);
                         }
+
+
                     }
                     var response = new OrdersResponse
                     {
@@ -606,6 +633,64 @@ namespace Quickart_API.Controllers
                 return response;
             }
         }
+
+
+
+        [HttpPost("ModifyOrder", Name = nameof(ModifyOrderAsync))]
+        public async Task<ActionResult<ModifyOrderResponse>> ModifyOrderAsync([FromBody] ModifyOrderRequest request)
+        {
+            try
+            {
+                string validate_token = validate(request.token);
+                bool validUser = true;
+                if (validate_token == null)
+                {
+                    validUser = false;
+                    var response = new ModifyOrderResponse
+                    {
+                        response_code = 500
+                    };
+
+                    return response;
+                }
+                else
+                {
+                    List<int> orderIds = new List<int>();
+                    orderIds = request.order_ids;
+                    string DataSource = _configuration.GetConnectionString("QuickartCon");
+                    MySqlDataReader myReader;
+                    foreach (int Id in orderIds)
+                    {
+                        string st = "update quickart_db.orders set order_status_id=2 where order_id=" + Id;
+                        using (MySqlConnection mycon = new MySqlConnection(DataSource))
+                        {
+                            mycon.Open();
+                            using (MySqlCommand mycommand = new MySqlCommand(st, mycon))
+                            {
+                                myReader = mycommand.ExecuteReader();
+                            }
+                            mycon.Close();
+                        }
+                    }
+
+                    var response = new ModifyOrderResponse
+                    {
+                        response_code = 200,
+                        reponse_message = "changed"
+                    };
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                var response = new ModifyOrderResponse
+                {
+                    response_code = 404,
+                    reponse_message = e.ToString()
+                };
+                return response;
+            }
+        }
+
     }
 }
-

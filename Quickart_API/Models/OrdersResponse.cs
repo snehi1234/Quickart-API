@@ -10,8 +10,13 @@ namespace Quickart_API.Models
     public class Order
     {
         public int order_id { get; set; }
-        //public int order_status_id { get; set; }
-        public string? order_by { get; set; }
+        public string? store_img { get; set; }
+        public string? store_name { get; set; }
+        public string? store_address { get; set; }
+        public string? store_address_lat { get; set; }
+        public string? store_address_long { get; set; }
+        public double? order_value { get; set; }
+        public int? total_items { get; set; }
     }
 
     public class OrdersResponse
