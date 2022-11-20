@@ -240,7 +240,7 @@ namespace Quickart_API.Controllers
                             foreach (DataRow row in table.Rows)
                             {
                                 if (row["no_of_products"] != DBNull.Value) order.noOfProducts = Convert.ToInt32(row["no_of_products"]);
-                                if (row["order_value"] != DBNull.Value) order.orderValue = Convert.ToInt32(row["order_value"]);
+                                if (row["order_value"] != DBNull.Value) order.orderValue = Convert.ToDouble(row["order_value"]);
                             }
                         }
 
@@ -266,7 +266,7 @@ namespace Quickart_API.Controllers
                                 if (row["product_qty_cnt"] != DBNull.Value)
                                     op.productQtyCnt = Convert.ToInt32(row["product_qty_cnt"]);
                                 if (row["product_price"] != DBNull.Value)
-                                    op.productPrice = Convert.ToInt32(row["product_price"]);
+                                    op.productPrice = Convert.ToDouble(row["product_price"]);
                                 op.productName = row["product_name"].ToString();
                                 op.productImageUrl = row["product_image_url"].ToString();
                                 op.productWeight = row["product_weight"].ToString();
